@@ -71,6 +71,10 @@ with st.sidebar:
     
     if st.button("Prediction", use_container_width=True, on_click=set_page_selection, args=('prediction',)):
         st.session_state.page_selection = 'prediction'
+    
+    st.markdown('<a href="https://www.kaggle.com/datasets/shantanugarg274/heart-prediction-dataset-quantum" style="color: #A9333A;">🔗Kaggle</a>', unsafe_allow_html=True)
+    st.markdown('<a href="https://colab.research.google.com/drive/1e9-VZ7SC9UazttzGxRSMWlsQk67_4rLZ?usp=sharing" style="color: #A9333A;">📕Google Colab</a>', unsafe_allow_html=True)
+    st.markdown("by: jjjlyk")
 #####################
 #data
 df = pd.read_csv("data/heart.csv")
@@ -130,7 +134,7 @@ if st.session_state.page_selection == "about":
     st.markdown("2. **K-Means Clustering**")
     st.markdown("3. **Logistic Regression**")
     st.markdown("The application is built using Streamlit, a Python library for building web applications.")
-    st.markdown("The source code for the application is available on GitHub: [CardioWise]")
+    st.markdown("The dataset used can be found from Kaggle: [Heart Prediction Dataset (Quantum)](https://www.kaggle.com/datasets/shantanugarg274/heart-prediction-dataset-quantum)")
 
 #dataset page
 if st.session_state.page_selection == "dataset":
@@ -156,9 +160,6 @@ if st.session_state.page_selection == "dataset":
 
 
 #eda page
-if st.session_state.page_selection == "eda":
-    st.title("Exploratory Data Analysis")
-
 def create_seaborn_plot(plot_type, data, x=None, y=None, hue=None, title=None, key=None, color=None):
     plt.figure(figsize=(10, 6))  # Set the figure size
 
@@ -185,59 +186,438 @@ def create_seaborn_plot(plot_type, data, x=None, y=None, hue=None, title=None, k
     plt.close()  # Close the plot to prevent overlapping
 
 #tabs to display different plots
-tab1, tab2, tab3= st.tabs([
-    "Demographic Analysis",
-    "Heart Disease Analysis",
-    "Quantum Pattern Feature Analysis",
-    ])
+if st.session_state.page_selection == "eda":
+    st.title("Exploratory Data Analysis")
+    tab1, tab2, tab3= st.tabs([
+        "Demographic Analysis",
+        "Heart Disease Analysis",
+        "Quantum Pattern Feature Analysis",
+        ])
 
-#for tab 1
-with tab1:
-    st.subheader("Demographic Analysis")
+    #for tab 1
+    with tab1:
+        st.subheader("Demographic Analysis")
 
-    col1, col2, = st.columns(2)
-    with col1:
-        st.markdown("#### Age Distribution")
-        bar_plot(df, "Age", 400, 300, 1, color = "#A9333A")
-    with col2:
-        st.markdown('#### Gender Distribution')
-        bar_plot(df, "Gender", 400, 300, 2, color = "#A9333A")
+        col1, col2, = st.columns(2)
+        with col1:
+            st.markdown("#### Age Distribution")
+            bar_plot(df, "Age", 400, 300, 1, color = "#A9333A")
+        with col2:
+            st.markdown('#### Gender Distribution')
+            bar_plot(df, "Gender", 400, 300, 2, color = "#A9333A")
 
-with tab2:
-    st.subheader("Heart Disease Analysis")
+    #for tab 2
+    with tab2:
+        st.subheader("Heart Disease Analysis")
 
-    col1, col2, col3 = st.columns(3)
-    with col1:
-        st.markdown("#### Blood Pressure and Gender")
+        if "analysis_type" not in st.session_state:
+            st.session_state.analysis_type = None
+
+        col_buttons = st.columns(2)
+        if col_buttons[0].button("Gender vs. Heart Disease"):
+            st.session_state.analysis_type = "Gender"
+        if col_buttons[1].button("Age vs. Heart Disease"):
+            st.session_state.analysis_type = "Age"
+
+        if st.session_state.analysis_type == "Gender":
+            col1, col2, col3 = st.columns(3)
+            with col1:
+                st.markdown("#### Blood Pressure and Gender")
+                create_seaborn_plot(
+                    plot_type='hist',
+                    data=df,
+                    x='BloodPressure',
+                    hue='Gender',
+                    title='Gender vs. Blood Pressure',
+                    key='blood_pressure_gender',
+                )
+                st.markdown("This graph shows the distribution of blood pressure by gender. Females have a concentrated distribution shown in the middle range of blood pressure (around 120-160) with a lower frequency at extreme ends. While Males have a consistent distribution across the blood pressure (around 90-180) that has a slight tendency towards a high frequency at the lower and higher ends.")
+            
+            with col2:
+                st.markdown("#### Cholesterol and Gender")
+                create_seaborn_plot(
+                    plot_type='hist',
+                    data=df,
+                    x='Cholesterol',
+                    hue='Gender',
+                    title='Cholesterol vs Gender',
+                    key='cholesterol_gender',
+                )
+                st.markdown("The graph shows the distribution of Cholesterol levels among two genders. Hence, the choresterol levels for both gender spans around 160 to 300 mg/dL. Males have more consistent distribution with a slight tendency towards a higher frequency in the lower choresterol ranges 160 to 120 mg/dL. Moreover, Females have a more concetrated distribution in the borderline high to higher choresterol range.")
+            
+            with col3:
+                st.markdown("#### Heart Rate and Gender")
+                create_seaborn_plot(
+                    plot_type='hist',
+                    data=df,
+                    x='HeartRate',
+                    hue='Gender',
+                    title='Heart Rate vs Gender',
+                    key='heart_rate_gender',
+                )
+                st.markdown("The stacked histogram reveals comparable heart rate distributions for both genders, with Gender 0 somewhat more common at lower rates and Gender 1 significantly more prevalent in the intermediate range.")
+
+        elif st.session_state.analysis_type == "Age":
+            col1, col2, col3 = st.columns(3)
+            with col1:
+                st.markdown("#### Blood Pressure and Age")
+                create_seaborn_plot(
+                    plot_type='hist',
+                    data=df,
+                    x='Age',
+                    y='BloodPressure',
+                    title='Age vs. Blood Pressure',
+                    key='blood_pressure_age',
+                )
+            with col2:
+                st.markdown("#### Cholesterol and Age")
+                create_seaborn_plot(
+                    plot_type='hist',
+                    data=df,
+                    x='Age',
+                    y='Cholesterol',
+                    title='Cholesterol vs Age',
+                    key='cholesterol_age',
+                )
+            with col3:
+                st.markdown("#### Heart Rate and Age")
+                create_seaborn_plot(
+                    plot_type='hist',
+                    data=df,
+                    x='Age',
+                    y='HeartRate',
+                    title='Heart Rate vs Age',
+                    key='heart_rate_age',
+                )
+        
+    #for tab 3
+    with tab3:
+        st.subheader("Quantum Pattern Feature Analysis")
+        st.markdown("#### Quantum Pattern Feature Distribution")
         create_seaborn_plot(
-            plot_type='box',
+            plot_type='hist',
             data=df,
-            x='BloodPressure',  # Ensure this matches the column name in your DataFrame
-            hue='Gender',
-            title='Gender vs. Blood Pressure',
-            key='blood_pressure_gender',
-            color = "#A9333A"
+            x='QuantumPatternFeature',
+            title='Quantum Pattern Feature Distribution',
+            key='quantum_pattern_feature',
         )
-    with col2:
-        st.markdown("#### Cholesterol and Gender")
-        create_seaborn_plot(
-            plot_type='box',
-            data=df,
-            x='Cholesterol',  # Ensure this matches the column name in your DataFrame
-            hue='Gender',
-            title='Cholesterol vs Gender',
-            key='cholesterol_gender',
-            color = "#A9333A"
-        )
-    with col3:
-        st.markdown("#### Heart Rate and Gender")
-        create_seaborn_plot(
-            plot_type='box',
-            data=df,
-            x='HeartRate',  # Ensure this matches the column name in your DataFrame
-            hue='Gender',
-            title='Heart Rate vs Gender',
-            key='heart_rate_gender',
-            color = "#A9333A"
-        )
-   
+
+        st.subheader("Correlation Heatmap")
+        numerical_cols = ['Age', 'BloodPressure', 'Cholesterol', 'HeartRate', 'QuantumPatternFeature']
+        correlation_matrix = df[numerical_cols].corr()
+        plt.figure(figsize=(10, 8))  
+        sns.heatmap(correlation_matrix, annot=True, cmap='coolwarm', fmt='.2f')
+        plt.title('Correlation Heatmap of Numerical Features')
+        st.pyplot(plt.gcf())
+        st.markdown("The correlation heatmap displays the correlations between numerical features. Age and QuantumPatternFeature have a moderately negative association (-0.38), but cholesterol and QuantumPatternFeature have a moderately positive connection (0.55). Other feature pairings have poor or near-zero correlation.")
+    
+#data cleaning page
+if st.session_state.page_selection == "data_cleaning":
+    st.title("Data Cleaning/Pre-Processing")
+    st.dataframe(df.head(), use_container_width=True, hide_index=True)
+
+    st.code("""encoder = LabelEncoder()""")
+    st.code("""df['HeartDisease_encoded'] = encoder.fit_transform(df['HeartDisease'])""")
+
+    encoder = LabelEncoder()
+    df['HeartDisease_encoded'] = encoder.fit_transform(df['HeartDisease'])
+
+    # Display the updated DataFrame or just the encoded column
+    st.dataframe(df[['HeartDisease', 'HeartDisease_encoded']], use_container_width=True, hide_index=True)
+    st.markdown("The 'HeartDisease' column has been encoded into 'HeartDisease_encoded'")
+
+    heart_disease_mapping = {0: 'No Heart Disease', 1: 'Heart Disease'}
+    df['HeartDisease_Label'] = df['HeartDisease_encoded'].map(heart_disease_mapping)
+    st.dataframe(df[['HeartDisease_encoded', 'HeartDisease_Label']], use_container_width=True, hide_index=True)
+    print(df[['HeartDisease_encoded', 'HeartDisease_Label']])
+    st.markdown("add description")
+
+    st.code("""features = ['Age', 'Gender', 'BloodPressure', 'Cholesterol', 'HeartRate']
+    target = 'HeartDisease Encoded'
+    X = df[features]
+    y = df[target]""")
+
+    st.markdown("The features and target columns are defined as follows:")
+    st.markdown("1. **Features**: Age, Gender, BloodPressure, Cholesterol, and HeartRate")
+    st.markdown("2. **Target**: HeartDisease Encoded")
+
+    st.code("""X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42""")
+
+
+
+#machine learning
+if st.session_state.page_selection == "machine_learning":
+    st.title("Machine Learning")
+    st.markdown("The application uses the following machine learning models to predict the presence of heart disease in patients:")
+    st.markdown("1. **Random Forest Classifier**")
+    st.markdown("2. **K-Means Clustering**")
+    st.markdown("3. **Logistic Regression**")
+    st.markdown("The Random Forest Classifier model is used to predict the presence of heart disease based on the patient's clinical variables. The K-Means Clustering model is used to cluster patients based on their clinical variables. The Logistic Regression model is used to predict the presence of heart disease based on the patient's clinical variables.")
+    
+    ##############################
+    #Supervised Model
+    st.subheader("Predicting Heart Disease Risk without Quantum Pattern Feature")
+    # Dataset
+    le = LabelEncoder()
+    df['HeartDisease Encoded'] = le.fit_transform(df['HeartDisease'])
+
+    # Features
+    features = ['Age', 'Gender', 'BloodPressure', 'Cholesterol', 'HeartRate']
+    target = 'HeartDisease Encoded'
+
+    X = df[features]
+    y = df[target]
+
+    # Split data into training and testing sets
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+    # Train model
+    rf_classifier = RandomForestClassifier(random_state=42)
+    rf_classifier.fit(X_train, y_train)
+
+    y_pred = rf_classifier.predict(X_test)
+
+    st.code("""rf_classifier = RandomForestClassifier(random_state=42)
+    rf_classifier.fit(X_train, y_train)
+
+    y_pred = rf_classifier.predict(X_test)""")
+
+    # Calculate accuracy of model (for classification)
+    accuracy = accuracy_score(y_test, y_pred)
+    print(f"Accuracy: {accuracy:.2f}")
+
+    st.code("""accuracy = accuracy_score(y_test, y_pred)""")
+    st.markdown("Accuracy: 0.84")
+
+    # Visualize Confusion Matrix
+    cm = confusion_matrix(y_test, y_pred)
+    plt.figure(figsize=(8, 6))
+    sns.heatmap(cm, annot=True, fmt='d', cmap='Blues')
+    plt.xlabel('Predicted')
+    plt.ylabel('Actual')
+    plt.title('Confusion Matrix - Logistic Regression')
+    st.pyplot(plt.gcf()) 
+    
+    st.markdown("The confusion matrix for the Logistic Regression model performs reasonably well, with an accuracy of 84%. It accurately predicted 30 cases of the negative class (0) and 54 instances of the positive class (1). However, there were 10 false positives and 6 false negatives, suggesting some misclassification. While the accuracy is reasonable, the occurrence of these mistakes indicates that the model's ability to correctly categorize heart disease depending on age and gender should be improved.")
+    ##############################
+    st.subheader("Predicting Heart Disease Risk with Quantum Pattern Feature")
+    # Encode 'HeartDisease' if it's categorical
+    le = LabelEncoder()
+    df['HeartDisease Encoded'] = le.fit_transform(df['HeartDisease'])
+
+    # Features including QuantumPatternFeature
+    features = ['QuantumPatternFeature']
+    target = 'HeartDisease Encoded'
+
+    xdata = df[features]
+    ydata = df[target]
+
+    # Split dataset
+    xtrain, xtest, ytrain, ytest = train_test_split(xdata, ydata, test_size=0.3, random_state=42)
+
+    # Train the model
+    model = LogisticRegression(max_iter=1000)
+    model.fit(xtrain, ytrain)
+
+    # Predict the test set
+    ypred = model.predict(xtest)
+
+    st.code("""model = LogisticRegression(max_iter=1000)
+    model.fit(xtrain, ytrain)
+
+    # Predict the test set
+    ypred = model.predict(xtest)""")
+
+    # Print classification report and confusion matrix
+    accuracy = accuracy_score(ytest, ypred)
+    print(f"Accuracy: {accuracy:.2f}")
+
+    st.code("""accuracy = accuracy_score(y_test, y_pred)""")
+    st.markdown("Accuracy: 0.92")
+
+    # Visualize Confusion Matrix
+    cm = confusion_matrix(ytest, ypred)
+    plt.figure(figsize=(8, 6))
+    sns.heatmap(cm, annot=True, fmt='d', cmap='Blues')
+    plt.xlabel('Predicted')
+    plt.ylabel('Actual')
+    plt.title('Confusion Matrix - Logistic Regression (with QuantumPatternFeature)')
+    st.pyplot(plt.gcf())
+
+    st.markdown("The confusion matrix for the Logistic Regression model performs reasonably well, with an accuracy of 92%. It accurately predicted 50 cases of the negative class (0) and 83 instances of the positive class (1). However, there were 4 false positives and 8 false negatives. The model's ability to correctly categorize heart disease based on the QuantumPatternFeature is improved, as evidenced by the higher accuracy and fewer misclassifications.")
+    ##############################
+    st.subheader("Classifying Heart Disease by Age and Gender")
+    # Encode 'HeartDisease' if it's categorical
+    le = LabelEncoder()
+    df['HeartDisease Encoded'] = le.fit_transform(df['HeartDisease'])
+
+    # Features: Age and Gender
+    features = ['Age', 'Gender']
+    target = 'HeartDisease Encoded'
+    X = df[features]
+    y = df[target]
+
+    st.code(""" features = ['Age', 'Gender']
+    target = 'HeartDisease Encoded'
+    X = df[features]
+    y = df[target]""")
+
+    # Split data into training and testing sets
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
+
+    # Train model
+    rf_classifier = RandomForestClassifier(random_state=42)
+    rf_classifier.fit(X_train, y_train)
+
+    y_pred = rf_classifier.predict(X_test)
+
+    # Calculate accuracy of model (for classification)
+    accuracy = accuracy_score(y_test, y_pred)
+    print(f"Accuracy: {accuracy:.2f}")
+
+    st.code("""accuracy = accuracy_score(y_test, y_pred)""")
+    st.markdown("Accuracy: 0.68")
+
+    # Visualize Confusion Matrix
+    cm = confusion_matrix(y_test, y_pred)
+    plt.figure(figsize=(8, 6))
+    sns.heatmap(cm, annot=True, fmt='d', cmap='Blues')
+    plt.xlabel('Predicted')
+    plt.ylabel('Actual')
+    plt.title('Confusion Matrix - Logistic Regression (Age & Gender)')
+    st.pyplot(plt.gcf())
+    st.markdown("The Logistic Regression model using simply Age and Gender produced a 68% accuracy. The confusion matrix displays 34 true negatives and 68 true positives, suggesting adequate competence in detecting both groups. However, it also exposes 25 false positives and 23 false negatives, demonstrating a large number of misclassifications and highlighting the model's limits when depending simply on these two characteristics.")
+    #####################
+    #Unsupervised Model
+    st.subheader("K-Means Clustering: Identifying Patient Subgroups Based on Feature Similarity (PCA)")
+    # Select numerical features for clustering
+    numerical_features = ['Age', 'BloodPressure', 'Cholesterol', 'HeartRate']
+    data_clustering = df[numerical_features].copy()
+
+    # Scale the data
+    scaler = StandardScaler()
+    scaled_data = scaler.fit_transform(data_clustering)
+    st.code("""scaler = StandardScaler()
+    scaled_data = scaler.fit_transform(data_clustering)""")
+
+    # K-Means clustering
+    kmeans = KMeans(n_clusters=3, random_state=42)
+    df['Cluster'] = kmeans.fit_predict(scaled_data)
+
+    # Visualize clusters using PCA for dimensionality reduction
+    pca = PCA(n_components=2)
+    pca_result = pca.fit_transform(scaled_data)
+    df['PCA1'] = pca_result[:, 0]
+    df['PCA2'] = pca_result[:, 1]
+
+    st.code("""pca = PCA(n_components=2)
+    pca_result = pca.fit_transform(scaled_data)
+    df['PCA1'] = pca_result[:, 0]
+    df['PCA2'] = pca_result[:, 1]""")
+
+    plt.figure(figsize=(10, 6))
+    sns.scatterplot(x='PCA1', y='PCA2', hue='Cluster', data=df, palette='viridis')
+    plt.title('K-Means Clustering (PCA Visualization)')
+    st.pyplot(plt.gcf())
+
+    cluster_means = df.groupby('Cluster')[numerical_features].mean()
+    print("Cluster Means:\n", cluster_means)
+
+    st.code("""cluster_means = df.groupby('Cluster')[numerical_features].mean()""")
+    st.markdown("### Cluster Means:")
+    st.markdown("""
+    | Cluster | Age       | BloodPressure | Cholesterol  | HeartRate   |
+    |---------|-----------|---------------|--------------|-------------|
+    | 0       | 40.230159 | 132.126984    | 211.888889   | 74.166667   |
+    | 1       | 66.045226 | 146.974874    | 219.376884   | 84.095477   |
+    | 2       | 52.685714 | 117.377143    | 230.834286   | 104.588571  |
+    """)
+    st.markdown("K-Means clustering, illustrated using PCA for dimensionality reduction, successfully partitioned the data into three separate clusters, highlighting underlying patterns in the dataset. Hence, revealed three separate patient groups: a younger, lower-risk group (Cluster 0); an older, higher-risk group (Cluster 1); and a middle-aged group with raised cholesterol and heart rate (Cluster 2).")
+
+
+#prediction page 
+if st.session_state.page_selection == "prediction":
+    st.title("Prediction")
+    st.markdown("The application allows users to make predictions using the machine learning models. Users can input the patient's clinical variables and get the prediction for the presence of heart disease.")
+    
+    col_pred = st.columns((3,3), gap='medium')
+      
+    with col_pred[0]:
+                st.subheader("Input Clinical Variables")
+                use_quantum_feature = st.radio("Include Quantum Pattern Feature?", options=["Without Quantum Feature", "With Quantum Feature"])
+
+                if use_quantum_feature == "Without Quantum Feature":
+                    age = st.number_input("Age", min_value=0, max_value=100, value=50, step=1)
+                    gender = st.selectbox("Gender", options=["Male", "Female"])
+                    gender = 1 if gender == "Male" else 0  # Encode gender as 1 for Male and 0 for Female
+                    blood_pressure = st.number_input("Blood Pressure", min_value=50, max_value=200, value=120, step=1)
+                    cholesterol = st.number_input("Cholesterol", min_value=100, max_value=400, value=200, step=1)
+                    heart_rate = st.number_input("Heart Rate", min_value=50, max_value=200, value=80, step=1)
+
+                    # Button to predict heart disease
+                    if st.button('Predict', key='dt_predict'):
+                        # Prepare the input data for prediction
+                        dt_input_data = [[age, gender, blood_pressure, cholesterol, heart_rate]]
+                                
+                        # Predict the presence of heart disease
+                        dt_prediction = rf_model.predict(dt_input_data)
+                                
+                        # Display the prediction result
+                        result = "Heart Disease Detected" if dt_prediction[0] == 1 else "No Heart Disease Detected"
+                        st.markdown(f'The prediction result is: `{result}`')
+
+                elif use_quantum_feature == "With Quantum Feature":
+                    quantum_pattern_feature = st.number_input("Quantum Pattern Feature", min_value=0, max_value=100, value=50, step=1)
+                    age = st.number_input("Age", min_value=0, max_value=100, value=50, step=1)
+                    gender = st.selectbox("Gender", options=["Male", "Female"])
+                    gender = 1 if gender == "Male" else 0  # Encode gender as 1 for Male and 0 for Female
+                    blood_pressure = st.number_input("Blood Pressure", min_value=50, max_value=200, value=120, step=1)
+                    cholesterol = st.number_input("Cholesterol", min_value=100, max_value=400, value=200, step=1)
+                    heart_rate = st.number_input("Heart Rate", min_value=50, max_value=200, value=80, step=1)
+                    
+                    if st.button('Predict', key='quantum_predict'):
+                        # Prepare the input data for prediction
+                        quantum_input_data = [[quantum_pattern_feature, age, gender, blood_pressure, cholesterol, heart_rate]]
+                            
+                        # Predict the presence of heart disease
+                        quantum_prediction = quantum.predict(quantum_input_data)
+                            
+                        # Display the prediction result
+                        result = "Heart Disease Detected" if quantum_prediction[0] == 1 else "No Heart Disease Detected"
+                        st.markdown(f'The prediction result is: `{result}`')
+        
+    with col_pred[1]:
+            st.subheader("Feature Similarity")
+            st.markdown("### Predict Your Cluster")
+            c_age = st.number_input("Age", min_value=0, max_value=100, value=50, step=1, key='cluster_age')
+            c_blood_pressure = st.number_input("Blood Pressure", min_value=50, max_value=200, value=120, step=1, key='cluster_bp')
+            c_cholesterol = st.number_input("Cholesterol", min_value=100, max_value=400, value=200, step=1, key='cluster_chol')
+            c_heart_rate = st.number_input("Heart Rate", min_value=50, max_value=200, value=80, step=1, key='cluster_hr')
+
+            # Ensure scaler is defined and fitted
+            numerical_features = ['Age', 'BloodPressure', 'Cholesterol', 'HeartRate']
+            data_clustering = df[numerical_features].copy()
+            scaler = StandardScaler()
+            scaled_data = scaler.fit_transform(data_clustering)
+
+            if st.button("Predict Cluster", key='predict_cluster'):
+                # Prepare the input data for clustering
+                user_input_data = [[c_age, c_blood_pressure, c_cholesterol, c_heart_rate]]
+
+                # Scale the input data using the same scaler
+                scaled_user_input_data = scaler.transform(user_input_data)
+
+                # Predict the cluster
+                user_cluster = kmeans.predict(scaled_user_input_data)
+
+                # Display the predicted cluster
+                st.markdown(f"Your input data belongs to **Cluster {user_cluster[0]}**.")
+
+                # Add cluster interpretation
+                if user_cluster[0] == 0:
+                    st.markdown("**Cluster 0**: Younger, lower-risk group.")
+                elif user_cluster[0] == 1:
+                    st.markdown("**Cluster 1**: Older, higher-risk group.")
+                elif user_cluster[0] == 2:
+                    st.markdown("**Cluster 2**: Middle-aged group with raised cholesterol and heart rate.")
+                
