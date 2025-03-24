@@ -1,5 +1,4 @@
 #libraries
-import os
 import streamlit as st
 import matplotlib.pyplot as plt
 import numpy as np
@@ -41,37 +40,40 @@ st.set_page_config(
 #####################
 
 #####################
-#session state
+# session state
 if 'page_selection' not in st.session_state:
-    st.session_state.page_selection = 'about' #this is the default page
+    st.session_state.page_selection = 'about'  # this is the default page
 
-#functionality to update the page_selection
+# functionality to update the page_selection
 def set_page_selection(page):
     st.session_state.page_selection = page
 
 
-#sidebar
+# sidebar
 with st.sidebar:
-    st.image("assets/images/logo1.png", width=200)
-    
+    st.image("assets/images/CardioWise.png", width=190)
+
     if st.button("About", use_container_width=True, on_click=set_page_selection, args=('about',)):
         st.session_state.page_selection = 'about'
 
     if st.button("Dataset", use_container_width=True, on_click=set_page_selection, args=('dataset',)):
         st.session_state.page_selection = 'dataset'
-    
+
     if st.button("EDA", use_container_width=True, on_click=set_page_selection, args=('eda',)):
         st.session_state.page_selection = 'eda'
-    
+
     if st.button("Data Cleaning/Pre-Processing", use_container_width=True, on_click=set_page_selection, args=('data_cleaning',)):
         st.session_state.page_selection = 'data_cleaning'
 
     if st.button("Machine Learning", use_container_width=True, on_click=set_page_selection, args=('machine_learning',)):
         st.session_state.page_selection = 'machine_learning'
-    
+
     if st.button("Prediction", use_container_width=True, on_click=set_page_selection, args=('prediction',)):
         st.session_state.page_selection = 'prediction'
-    
+
+    if st.button("Conclusion", use_container_width=True, on_click=set_page_selection, args=('conclusion',)):
+        st.session_state.page_selection = 'conclusion'
+
     st.markdown('<a href="https://www.kaggle.com/datasets/shantanugarg274/heart-prediction-dataset-quantum" style="color: #A9333A;">🔗Kaggle</a>', unsafe_allow_html=True)
     st.markdown('<a href="https://colab.research.google.com/drive/1e9-VZ7SC9UazttzGxRSMWlsQk67_4rLZ?usp=sharing" style="color: #A9333A;">📕Google Colab</a>', unsafe_allow_html=True)
     st.markdown("by: jjjlyk")
@@ -156,17 +158,18 @@ if st.session_state.page_selection == "dataset":
 # Describe Statistics
     st.subheader("Descriptive Statistics")
     st.dataframe(df.describe(), use_container_width=True)
+    st.markdown("This table presents the statistical distribution of several heart disease-related variables (age, gender, blood pressure, and so on) in a 500-person sample. It displays the count, mean, standard deviation, minimum, quartiles, and maximum values for each attribute.  For example, the average age is around 55, and 60% of the population has heart disease.")
 
 
 
 #eda page
 def create_seaborn_plot(plot_type, data, x=None, y=None, hue=None, title=None, key=None, color=None):
-    plt.figure(figsize=(10, 6))  # Set the figure size
+    plt.figure(figsize=(10, 6))  
 
     if plot_type == 'scatter':
         sns.scatterplot(data=data, x=x, y=y, hue=hue)
     elif plot_type == 'box':
-        sns.boxplot(data=data, x=hue, y=x)  # Use `hue` as the x-axis for grouping
+        sns.boxplot(data=data, x=hue, y=x)  
     elif plot_type == 'bar':
         sns.barplot(data=data, x=hue, y=x)
     elif plot_type == 'hist':
@@ -176,14 +179,14 @@ def create_seaborn_plot(plot_type, data, x=None, y=None, hue=None, title=None, k
     elif plot_type == 'line':
         sns.lineplot(data=data, x=x, y=y)
 
-    plt.title(title)  # Set the title
-    plt.xlabel(x)  # Set the x-axis label
-    plt.ylabel(y if y else x)  # Set the y-axis label
+    plt.title(title)  
+    plt.xlabel(x)  
+    plt.ylabel(y if y else x) 
     if hue:
-        plt.legend(title=hue)  # Add a legend if `hue` is specified
+        plt.legend(title=hue)  
 
-    st.pyplot(plt)  # Render the plot in Streamlit
-    plt.close()  # Close the plot to prevent overlapping
+    st.pyplot(plt)  
+    plt.close()  
 
 #tabs to display different plots
 if st.session_state.page_selection == "eda":
@@ -269,6 +272,8 @@ if st.session_state.page_selection == "eda":
                     title='Age vs. Blood Pressure',
                     key='blood_pressure_age',
                 )
+                st.markdown("The graph depicts the association between age and blood pressure.  It appears that blood pressure rises with age, albeit the connection is not entirely linear and there is a lot of variety.  There are multiple peaks and troughs, reflecting blood pressure changes at various ages.")
+            
             with col2:
                 st.markdown("#### Cholesterol and Age")
                 create_seaborn_plot(
@@ -279,6 +284,8 @@ if st.session_state.page_selection == "eda":
                     title='Cholesterol vs Age',
                     key='cholesterol_age',
                 )
+                st.markdown("The graph depicts the association between age and cholesterol levels. It indicates that cholesterol tends to rise with age, albeit the connection is not entirely linear and there is a lot of variation.  There are multiple peaks and valleys, representing cholesterol changes at various ages.")
+            
             with col3:
                 st.markdown("#### Heart Rate and Age")
                 create_seaborn_plot(
@@ -289,6 +296,7 @@ if st.session_state.page_selection == "eda":
                     title='Heart Rate vs Age',
                     key='heart_rate_age',
                 )
+                st.markdown(" The graph depicts the association between age and heart rate. It indicates that heart rate tends to decrease with age, albeit the connection is not entirely linear and there is a lot of variation.  There are multiple peaks and valleys, representing heart rate changes at various ages.")
         
     #for tab 3
     with tab3:
@@ -301,6 +309,7 @@ if st.session_state.page_selection == "eda":
             title='Quantum Pattern Feature Distribution',
             key='quantum_pattern_feature',
         )
+        st.markdown("This graph depicts the distribution of a Quantum Pattern Feature. It is somewhat bell-shaped (normal distribution) and centered about 8.5, suggesting that values near 8.5 are more common, with fewer values occurring further away.")
 
         st.subheader("Correlation Heatmap")
         numerical_cols = ['Age', 'BloodPressure', 'Cholesterol', 'HeartRate', 'QuantumPatternFeature']
@@ -330,7 +339,7 @@ if st.session_state.page_selection == "data_cleaning":
     df['HeartDisease_Label'] = df['HeartDisease_encoded'].map(heart_disease_mapping)
     st.dataframe(df[['HeartDisease_encoded', 'HeartDisease_Label']], use_container_width=True, hide_index=True)
     print(df[['HeartDisease_encoded', 'HeartDisease_Label']])
-    st.markdown("add description")
+    st.markdown("This table illustrates the relationship between an encoded Heart Disease value (0 or 1) and its associated label (No Heart Disease or Heart Disease).  0 signifies No Heart Disease and 1 represents Heart Disease.")
 
     st.code("""features = ['Age', 'Gender', 'BloodPressure', 'Cholesterol', 'HeartRate']
     target = 'HeartDisease Encoded'
@@ -342,6 +351,7 @@ if st.session_state.page_selection == "data_cleaning":
     st.markdown("2. **Target**: HeartDisease Encoded")
 
     st.code("""X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42""")
+    st.markdown("The data is split into training and testing sets using an 80/20 split ratio.")
 
 
 
@@ -554,15 +564,11 @@ if st.session_state.page_selection == "prediction":
                     cholesterol = st.number_input("Cholesterol", min_value=100, max_value=400, value=200, step=1)
                     heart_rate = st.number_input("Heart Rate", min_value=50, max_value=200, value=80, step=1)
 
-                    # Button to predict heart disease
                     if st.button('Predict', key='dt_predict'):
-                        # Prepare the input data for prediction
                         dt_input_data = [[age, gender, blood_pressure, cholesterol, heart_rate]]
-                                
-                        # Predict the presence of heart disease
+
                         dt_prediction = rf_model.predict(dt_input_data)
                                 
-                        # Display the prediction result
                         result = "Heart Disease Detected" if dt_prediction[0] == 1 else "No Heart Disease Detected"
                         st.markdown(f'The prediction result is: `{result}`')
 
@@ -576,13 +582,10 @@ if st.session_state.page_selection == "prediction":
                     heart_rate = st.number_input("Heart Rate", min_value=50, max_value=200, value=80, step=1)
                     
                     if st.button('Predict', key='quantum_predict'):
-                        # Prepare the input data for prediction
                         quantum_input_data = [[quantum_pattern_feature, age, gender, blood_pressure, cholesterol, heart_rate]]
                             
-                        # Predict the presence of heart disease
                         quantum_prediction = quantum.predict(quantum_input_data)
                             
-                        # Display the prediction result
                         result = "Heart Disease Detected" if quantum_prediction[0] == 1 else "No Heart Disease Detected"
                         st.markdown(f'The prediction result is: `{result}`')
         
@@ -594,30 +597,30 @@ if st.session_state.page_selection == "prediction":
             c_cholesterol = st.number_input("Cholesterol", min_value=100, max_value=400, value=200, step=1, key='cluster_chol')
             c_heart_rate = st.number_input("Heart Rate", min_value=50, max_value=200, value=80, step=1, key='cluster_hr')
 
-            # Ensure scaler is defined and fitted
             numerical_features = ['Age', 'BloodPressure', 'Cholesterol', 'HeartRate']
             data_clustering = df[numerical_features].copy()
             scaler = StandardScaler()
             scaled_data = scaler.fit_transform(data_clustering)
 
             if st.button("Predict Cluster", key='predict_cluster'):
-                # Prepare the input data for clustering
                 user_input_data = [[c_age, c_blood_pressure, c_cholesterol, c_heart_rate]]
 
-                # Scale the input data using the same scaler
                 scaled_user_input_data = scaler.transform(user_input_data)
 
-                # Predict the cluster
                 user_cluster = kmeans.predict(scaled_user_input_data)
 
-                # Display the predicted cluster
                 st.markdown(f"Your input data belongs to **Cluster {user_cluster[0]}**.")
-
-                # Add cluster interpretation
                 if user_cluster[0] == 0:
                     st.markdown("**Cluster 0**: Younger, lower-risk group.")
                 elif user_cluster[0] == 1:
                     st.markdown("**Cluster 1**: Older, higher-risk group.")
                 elif user_cluster[0] == 2:
                     st.markdown("**Cluster 2**: Middle-aged group with raised cholesterol and heart rate.")
-                
+
+###############
+#conclusion page
+if st.session_state.page_selection == "conclusion":
+    st.title("Conclusion")
+    st.markdown("CardioWise is a web application that helps in predicting the presence of heart disease in patients. The application uses machine learning models to predict the presence of heart disease in patients. The application also provides data visualization and exploratory data analysis to help users understand the data better.")
+    st.markdown("This study effectively illustrates the value of machine learning in assessing cardiovascular risk.  **Supervised models** emphasize the relevance of the Quantum Pattern Feature in predicting heart disease, whereas age and gender are less predictive. **Unsupervised K-Means clustering** indicated patient groupings that needed more medical investigation for clinical relevance. The results revealed a **median patient age of 55-60**, different blood pressure and cholesterol distributions between genders, and a 40% heart disease prevalence.  The **Quantum Pattern Feature** has mild relationships with age and cholesterol, prompting additional inquiry. Overall, this study sheds light on prospective diagnostic, therapy, and prevention techniques for heart disease.")
+    st.markdown("Note: This is just a prototype application and should not be used for medical diagnosis or treatment. Always consult a healthcare professional for medical advice and treatment.")
