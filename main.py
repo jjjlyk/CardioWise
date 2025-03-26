@@ -131,6 +131,7 @@ if st.session_state.page_selection == "about":
     st.markdown("3. **Data Cleaning/Pre-Processing**: This section provides information about data cleaning and pre-processing steps.")
     st.markdown("4. **Machine Learning**: This section provides information about the machine learning models used in the application.")
     st.markdown("5. **Prediction**: This section allows users to make predictions using the machine learning models.")
+    st.markdown("6. **Conclusion**: This section provides a conclusion and summary of the application.")
     st.markdown("The application uses the following machine learning models:")
     st.markdown("1. **Random Forest Classifier**")
     st.markdown("2. **K-Means Clustering**")
