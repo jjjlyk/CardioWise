@@ -19,4 +19,5 @@ It uses Supervised and Unsupervised model to further make predictions or cover p
 Note: This is not advisable to use this application for any medical reason. This is just a way to predict heart disease patients from the chosen dataset and to practice analytical skills. 
 
 Google Colab Notebook: https://colab.research.google.com/drive/1e9-VZ7SC9UazttzGxRSMWlsQk67_4rLZ?usp=sharing
+
 Kaggle link: https://www.kaggle.com/datasets/shantanugarg274/heart-prediction-dataset-quantum
