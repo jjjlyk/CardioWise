@@ -20,7 +20,7 @@ It uses Supervised and Unsupervised model to further make predictions or cover p
 # 🔧How to run the application:
 1. Clone repository
 ```bash
-git clone <https://github.com/jjjlyk/CardioWise.git>
+git clone https://github.com/jjjlyk/CardioWise.git
 ```
 
 2. Navigate to the Repository Directory
