@@ -35,14 +35,14 @@ pip install -r requirements.txt
 
 4. Run the streamlit application
 ```bash
-    streamlit run main.py
+streamlit run main.py
 ```
 
 # 📃Note:
 This is not advisable to use this application for any medical reason. This is just a way to predict heart disease patients from the chosen dataset and to practice analytical skills. 
 
 
-🔗Links
+# 🔗Links
 Google Colab Notebook: https://colab.research.google.com/drive/1e9-VZ7SC9UazttzGxRSMWlsQk67_4rLZ?usp=sharing
 
 Kaggle link: https://www.kaggle.com/datasets/shantanugarg274/heart-prediction-dataset-quantum
